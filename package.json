@@ -8,55 +8,7 @@
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "start": "cross-env NODE_ENV=production node dist/index.js",
     "check": "tsc",
-<<<<<<< HEAD
-    "db:push": "drizzle-kit push",
-    "test": "jest",
-    "test:unit": "jest --testPathPattern=tests/unit",
-    "test:integration": "jest --testPathPattern=tests/integration",
-    "test:api": "newman run postman/Movie_Ticket_Booking_API.postman_collection.json --environment postman/Development.postman_environment.json",
-    "test:performance": "artillery run performance/load-test.yml",
-    "test:security": "npm audit && snyk test",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
-    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "type-check": "tsc --noEmit",
-    "docker:build": "docker build -t movie-ticket-booking .",
-    "docker:build:dev": "docker build -f Dockerfile.dev -t movie-ticket-booking:dev .",
-    "docker:run": "docker run -p 5000:5000 movie-ticket-booking",
-    "docker:dev": "./scripts/docker-dev.sh start",
-    "docker:dev:stop": "./scripts/docker-dev.sh stop",
-    "docker:dev:restart": "./scripts/docker-dev.sh restart",
-    "docker:dev:logs": "./scripts/docker-dev.sh logs",
-    "docker:dev:cleanup": "./scripts/docker-dev.sh cleanup",
-    "docker:prod": "./scripts/docker-prod.sh start",
-    "docker:prod:stop": "./scripts/docker-prod.sh stop",
-    "docker:prod:restart": "./scripts/docker-prod.sh restart",
-    "docker:prod:logs": "./scripts/docker-prod.sh logs",
-    "docker:prod:backup": "./scripts/docker-prod.sh backup-db",
-    "docker:test": "./scripts/docker-test.sh all",
-    "docker:test:unit": "./scripts/docker-test.sh unit",
-    "docker:test:integration": "./scripts/docker-test.sh integration",
-    "docker:test:api": "./scripts/docker-test.sh api",
-    "docker:test:cleanup": "./scripts/docker-test.sh cleanup",
-    "k8s:deploy:staging": "./scripts/deploy.sh staging",
-    "k8s:deploy:prod": "./scripts/deploy.sh production",
-    "k8s:rollback": "./scripts/deploy.sh rollback",
-    "migrate:up": "node scripts/migrate.js up",
-    "migrate:down": "node scripts/migrate.js down",
-    "migrate:create": "node scripts/migrate.js create",
-    "security:scan": "snyk test && npm audit",
-    "performance:check": "node scripts/check-performance-thresholds.js",
-    "ci:install": "npm ci",
-    "ci:build": "npm run build",
-    "ci:test": "npm run test:unit && npm run test:integration",
-    "ci:security": "npm run security:scan",
-    "ci:performance": "npm run test:performance && npm run performance:check performance/results/artillery-report.json"
-=======
     "db:push": "drizzle-kit push"
->>>>>>> bd97d2dcd87743cb25cac9522dd215e630b37313
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -112,10 +64,6 @@
     "mongodb": "^6.17.0",
     "nanoid": "^5.1.5",
     "next-themes": "^0.4.6",
-<<<<<<< HEAD
-    "node-fetch": "^3.3.2",
-=======
->>>>>>> bd97d2dcd87743cb25cac9522dd215e630b37313
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "react": "^18.3.1",
@@ -148,11 +96,7 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "@types/swagger-jsdoc": "^6.0.4",
-<<<<<<< HEAD
-    "@types/swagger-ui-express": "^4.1.8",
-=======
     "@types/swagger-ui-express": "^4.1.6",
->>>>>>> bd97d2dcd87743cb25cac9522dd215e630b37313
     "@types/ws": "^8.5.13",
     "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.20",
@@ -160,11 +104,8 @@
     "drizzle-kit": "^0.30.4",
     "esbuild": "^0.25.0",
     "postcss": "^8.4.47",
-<<<<<<< HEAD
-=======
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
->>>>>>> bd97d2dcd87743cb25cac9522dd215e630b37313
     "tailwindcss": "^3.4.17",
     "tsx": "^4.19.1",
     "typescript": "5.6.3",

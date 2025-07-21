@@ -97,6 +97,12 @@ export class MemStorage implements IStorage {
     this.initializeData();
   }
 
+  async init(): Promise<void> {
+    // Initialize storage - for in-memory storage, this is just a placeholder
+    // In a real database implementation, this would establish connection
+    console.log('Storage initialized successfully');
+  }
+
   private initializeData() {
     // Initialize with some sample data
     // Create admin user

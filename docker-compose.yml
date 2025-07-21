@@ -1,34 +1,34 @@
-
+version: '3.8'
 
 services:
-  # MongoDB service
+  # MongoDB Database
   mongo:
     image: mongo:7.0
     container_name: minicinema_mongo
-    restart: always
+    restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: minicinema123
       MONGO_INITDB_DATABASE: movie
+    ports:
+      - "27017:27017"
     volumes:
       - mongo_data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-    ports:
-      - "27017:27017"
     networks:
       - minicinema_network
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 5
+      start_period: 30s
 
-
-  # Redis service (for caching)
+  # Redis Cache
   redis:
     image: redis:7-alpine
     container_name: minicinema_redis
-    restart: always
+    restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
@@ -39,17 +39,18 @@ services:
       test: ["CMD", "redis-cli", "ping"]
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 5
+      start_period: 10s
 
-
-  # NaCinema application
+  # Main Application
   app:
     build:
       context: .
-      target: development
       dockerfile: Dockerfile
     container_name: minicinema_app
     restart: unless-stopped
+    ports:
+      - "5000:5000"
     depends_on:
       mongo:
         condition: service_healthy
@@ -57,55 +58,37 @@ services:
         condition: service_healthy
     environment:
       - NODE_ENV=development
-<<<<<<< HEAD
-      - MONGODB_URI=mongodb+srv://admin:xYwxTxZboPPKnqnu@cluster0.rt1k6hn.mongodb.net/cinemabook
-=======
       - MONGODB_URI=mongodb://admin:minicinema123@mongo:27017/movie?authSource=admin
->>>>>>> bd97d2dcd87743cb25cac9522dd215e630b37313
       - REDIS_URL=redis://redis:6379
-      - JWT_SECRET=your-secret-key-change-this-in-production
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
       - PORT=5000
-    ports:
-      - "5000:5000"
     volumes:
       - ./uploads:/app/uploads:rw
       - app_logs:/app/logs
     networks:
-<<<<<<< HEAD
       - minicinema_network
-=======
-      - nacinema_network
->>>>>>> bd97d2dcd87743cb25cac9522dd215e630b37313
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 60s
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-        reservations:
-          memory: 512M
-
 
   # Nginx reverse proxy
   nginx:
     image: nginx:alpine
     container_name: minicinema_nginx
-    restart: always
-    depends_on:
-      - app
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
     networks:
       - minicinema_network
-
 
 volumes:
   mongo_data:
@@ -115,13 +98,6 @@ volumes:
   app_logs:
     driver: local
 
-
 networks:
-<<<<<<< HEAD
   minicinema_network:
     driver: bridge
-=======
-  nacinema_network:
-    driver: bridgea
->>>>>>> bd97d2dcd87743cb25cac9522dd215e630b37313
-

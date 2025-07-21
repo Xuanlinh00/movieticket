@@ -9,44 +9,47 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: false, limit: '10mb' }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
+// CORS middleware
 app.use((req, res, next) => {
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
-
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
-
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
-
-      log(logLine);
-    }
-  });
-
-  next();
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
 });
 
 (async () => {
-  // Connect to MongoDB
+  // Initialize database connection
   try {
     await storage.connect();
-    log('MongoDB connected successfully');
+    log('Connected to MongoDB successfully');
+    
+    // Create admin user if not exists
+    const adminEmail = 'admin@cinemabook.vn';
+    const existingAdmin = await storage.getUserByEmail(adminEmail);
+    
+    if (!existingAdmin) {
+      const bcrypt = await import('bcryptjs');
+      const hashedPassword = await bcrypt.hash('password', 10);
+      
+      await storage.createUser({
+        username: 'admin',
+        email: adminEmail,
+        password: hashedPassword,
+        fullName: 'System Administrator',
+        phone: '0123456789',
+        role: 'admin'
+      });
+      
+      log('Admin user created successfully');
+    }
   } catch (error) {
     log('Failed to connect to MongoDB: ' + (error as Error).message);
     process.exit(1);
@@ -54,11 +57,7 @@ app.use((req, res, next) => {
 
   const server = await registerRoutes(app);
 
-<<<<<<< HEAD
   // Setup Swagger documentation after routes
-=======
-  // Setup Swagger documentation
->>>>>>> bd97d2dcd87743cb25cac9522dd215e630b37313
   setupSwagger(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -73,39 +72,18 @@ app.use((req, res, next) => {
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
   if (app.get("env") === "development") {
-    await setupVite(app, server);
+    await setupVite(app);
   } else {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
-  const host = process.platform === 'win32' ? 'localhost' : '0.0.0.0';
-
-  server.listen(port, host, () => {
-    log(`serving on ${host}:${port}`);
-  }).on('error', (err: any) => {
-    if (err.code === 'EADDRINUSE') {
-      log(`Port ${port} is already in use. Please stop the existing process or use a different port.`);
-      log(`To kill process on port ${port}, run: netstat -ano | findstr :${port} then taskkill /PID <PID> /F`);
-      process.exit(1);
-    } else {
-      throw err;
-    }
+  // IMPORTANT: this must come last to not interfere with the other routes
+  app.get("*", (_req, res) => {
+    res.sendFile("index.html", { root: "dist/public" });
   });
 
-  // Graceful shutdown
-  process.on('SIGINT', async () => {
-    log('Shutting down gracefully...');
-    await storage.disconnect();
-    process.exit(0);
-  });
-
-  process.on('SIGTERM', async () => {
-    log('Shutting down gracefully...');
-    await storage.disconnect();
-    process.exit(0);
+  const PORT = process.env.PORT || 5000;
+  server.listen(PORT, "0.0.0.0", () => {
+    log(`Server running on http://0.0.0.0:${PORT}`);
   });
 })();
