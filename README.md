@@ -1,6 +1,6 @@
-# 🎬 NaCinema - Hệ Thống Quản Lý Vé Xem Phim
+# 🎬 MiniCinema - Hệ Thống Quản Lý Vé Xem Phim
 
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/Lamvanna/QLVXP)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/Xuanlinh00/movieticket.git
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-18-blue)](https://reactjs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Database-green)](https://mongodb.com/)
@@ -8,7 +8,7 @@
 
 ## 📖 Giới thiệu
 
-**NaCinema** là hệ thống quản lý vé xem phim toàn diện được xây dựng với công nghệ hiện đại. Hệ thống cung cấp đầy đủ các tính năng từ duyệt phim, đặt vé, quản lý rạp chiếu đến bảng điều khiển admin với giao diện thân thiện và trải nghiệm người dùng tuyệt vời.
+**MiniCinema** là hệ thống quản lý vé xem phim toàn diện được xây dựng với công nghệ hiện đại. Hệ thống cung cấp đầy đủ các tính năng từ duyệt phim, đặt vé, quản lý rạp chiếu đến bảng điều khiển admin với giao diện thân thiện và trải nghiệm người dùng tuyệt vời.
 
 ## Công nghệ sử dụng
 
@@ -125,7 +125,7 @@ Cập nhật thông tin trong `.env`:
 
 ```env
 # MongoDB Connection
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/nacinema?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/Minicinema?retryWrites=true&w=majority
 
 # JWT Secret Key
 JWT_SECRET=your-super-secret-jwt-key-here
@@ -195,7 +195,7 @@ movie-ticket-booking/
 
 ### Staff Account
 
-- **Email:** staff@nacinema.com
+- **Email:** staff@minicinema.com
 - **Password:** staff123
 - **Role:** Staff (quản lý suất chiếu, vé)
 
@@ -411,7 +411,7 @@ docker-compose -f docker-compose.yml up -d
 
 ```env
 NODE_ENV=production
-MONGODB_URI=mongodb://admin:strong_password@mongo:27017/nacinema?authSource=admin
+MONGODB_URI=mongodb://admin:strong_password@mongo:27017/minicinema?authSource=admin
 REDIS_URL=redis://redis:6379
 JWT_SECRET=your-super-secret-jwt-key-for-production
 PORT=5000
@@ -451,7 +451,7 @@ MIT License
 
 ## Liên hệ
 
-- Email: support@nacinema.com
+- Email: support@minicinema.com
 - GitHub: [repository-url]
 
 ---
