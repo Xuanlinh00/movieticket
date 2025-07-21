@@ -1,6 +1,6 @@
 # 🎬 MiniCinema - Hệ Thống Quản Lý Vé Xem Phim
 
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/Xuanlinh00/movieticket.git
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/Xuanlinh00/movieticket)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-18-blue)](https://reactjs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Database-green)](https://mongodb.com/)
