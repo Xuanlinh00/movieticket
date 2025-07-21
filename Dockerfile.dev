@@ -1,0 +1,90 @@
+<<<<<<< HEAD
+# Development Dockerfile for Movie Ticket Booking Application
+FROM node:18-alpine AS base
+
+# Install development tools and dependencies
+RUN apk update && apk upgrade && \
+    apk add --no-cache \
+    dumb-init \
+    curl \
+    git \
+    bash \
+    vim \
+    nano \
+    htop \
+    && rm -rf /var/cache/apk/*
+=======
+# Development Dockerfile for NaCinema
+FROM node:18-alpine
+
+# Install curl for health checks
+RUN apk add --no-cache curl
+>>>>>>> bd97d2dcd87743cb25cac9522dd215e630b37313
+
+# Set working directory
+WORKDIR /app
+
+<<<<<<< HEAD
+# Create non-root user for development
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 --ingroup nodejs --shell /bin/bash devuser
+
+# Development stage
+FROM base AS development
+
+# Set development environment variables
+ENV NODE_ENV=development \
+    PORT=5000 \
+    CHOKIDAR_USEPOLLING=true \
+    WATCHPACK_POLLING=true \
+    NPM_CONFIG_LOGLEVEL=info
+
+# Create necessary directories with proper permissions
+RUN mkdir -p /app/uploads /app/logs /app/temp /app/node_modules && \
+    chown -R devuser:nodejs /app
+
+# Copy package files with proper ownership
+COPY --chown=devuser:nodejs package*.json ./
+
+# Install all dependencies (including dev dependencies)
+RUN npm install && npm cache clean --force
+
+# Copy source code with proper ownership
+COPY --chown=devuser:nodejs . .
+
+# Create volume mount points for development
+VOLUME ["/app/uploads", "/app/logs"]
+
+# Expose ports for development (app, vite dev server, debug port)
+EXPOSE 5000 5173 3000 9229
+
+# Switch to non-root user
+USER devuser
+
+# Health check for development
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:5000/api/movies || exit 1
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
+# Default command for development (can be overridden)
+=======
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev dependencies)
+RUN npm install
+
+# Copy source code
+COPY . .
+
+# Create uploads directory
+RUN mkdir -p uploads
+
+# Expose ports
+EXPOSE 5000 3000
+
+# Start development server
+>>>>>>> bd97d2dcd87743cb25cac9522dd215e630b37313
+CMD ["npm", "run", "dev"]
