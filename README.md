@@ -1,7 +1,7 @@
 # 🎬 MiniCinema - Hệ Thống Quản Lý Vé Xem Phim
-=======
+
 # 🎬 MiniCinema - Hệ Thống Đặt Vé Xem Phim Trực Tuyến
->>>>>>> ac22763 (Update-json)
+ ac22763 (Update-json)
 
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/Xuanlinh00/movieticket)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green)](https://nodejs.org/)
@@ -11,9 +11,8 @@
 
 ## 📖 Giới thiệu
 
-<<<<<<< HEAD
 **MiniCinema** là hệ thống quản lý vé xem phim toàn diện được xây dựng với công nghệ hiện đại. Hệ thống cung cấp đầy đủ các tính năng từ duyệt phim, đặt vé, quản lý rạp chiếu đến bảng điều khiển admin với giao diện thân thiện và trải nghiệm người dùng tuyệt vời.
-=======
+
 **MiNICinema** là hệ thống quản lý vé xem phim toàn diện được xây dựng với công nghệ hiện đại. Hệ thống cung cấp đầy đủ các tính năng từ duyệt phim, đặt vé, quản lý rạp chiếu đến bảng điều khiển admin với giao diện thân thiện và trải nghiệm người dùng tuyệt vời.
 
 
