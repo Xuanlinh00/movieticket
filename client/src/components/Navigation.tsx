@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Film, Search, User, Menu, LogOut } from "lucide-react";
+import { Film, User, Menu, LogOut } from "lucide-react";
 import { isAuthenticated, getAuthUser, logout } from "@/lib/auth";
 import {
   DropdownMenu,
@@ -62,15 +61,6 @@ export default function Navigation() {
         </div>
 
         <div className="flex items-center space-x-4">
-          <div className="hidden md:flex items-center space-x-3 bg-orange-200 rounded-full px-2 py-1">
-            <Search className="text-white" size={20} />
-            <Input
-              type="text"
-              placeholder="Tìm kiếm phim..."
-              className="bg-transparent border-none outline-none text-white placeholder-orange-100"
-            />
-          </div>
-
           {authenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

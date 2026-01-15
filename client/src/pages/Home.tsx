@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Play, Ticket } from "lucide-react";
@@ -24,19 +25,17 @@ type Cinema = {
 };
 
 export default function Home() {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const [selectedGenre, setSelectedGenre] = useState<string>("all");
   const [selectedCinema, setSelectedCinema] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // Get search query from URL
+  // Get search query from URL and update when URL changes
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const search = urlParams.get('search');
-    if (search) {
-      setSearchQuery(search);
-    }
-  }, []);
+    setSearchQuery(search || "");
+  }, [location]); // Re-run when location changes
 
   const moviesQuery = useQuery<MovieWithDetails[]>({
     queryKey: ["/api/movies"],
@@ -56,6 +55,15 @@ export default function Home() {
     },
   });
 
+  const showtimesQuery = useQuery({
+    queryKey: ["/api/showtimes"],
+    queryFn: async () => {
+      const res = await fetch("/api/showtimes");
+      if (!res.ok) throw new Error("Failed to fetch showtimes");
+      return res.json();
+    },
+  });
+
   const promotionsQuery = useQuery<Promotion[]>({
     queryKey: ["/api/promotions/active"],
     queryFn: async () => {
@@ -69,16 +77,36 @@ export default function Home() {
   const movies = moviesQuery.data || [];
   const cinemas = cinemasQuery.data || [];
   const promotions = promotionsQuery.data || [];
+  const showtimes = showtimesQuery.data || [];
 
   const filteredMovies = movies.filter(movie => {
-    if (selectedGenre !== "all" && movie.genre !== selectedGenre) return false;
-    if (selectedCinema !== "all" && movie.cinemaId?.toString() !== selectedCinema) return false;
+    // Filter by genre
+    if (selectedGenre !== "all") {
+      const movieGenre = Array.isArray(movie.genre) ? movie.genre[0] : movie.genre;
+      if (movieGenre !== selectedGenre) return false;
+    }
+    
+    // Filter by cinema - check if movie has showtimes in selected cinema
+    if (selectedCinema !== "all") {
+      const movieShowtimes = showtimes.filter((st: any) => st.movieId === movie.id);
+      const hasShowtimeInCinema = movieShowtimes.some((st: any) => {
+        const room = st.room;
+        return room?.cinemaId?.toString() === selectedCinema;
+      });
+      if (!hasShowtimeInCinema) return false;
+    }
+    
+    // Filter by search query
     if (searchQuery && !movie.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    
+    // Only show active movies
     return movie.status === "active";
   });
 
   const comingSoonMovies = movies.filter(movie => movie.status === "coming-soon");
-  const genres = [...new Set(movies.map(movie => movie.genre))];
+  const genres = [...new Set(movies.flatMap(movie => 
+    Array.isArray(movie.genre) ? movie.genre : [movie.genre]
+  ))].filter(Boolean);
 
   const handleBookTicket = (movieId: number) => {
     setLocation(`/movie/${movieId}`);
@@ -174,11 +202,18 @@ export default function Home() {
       {/* Movie Grid */}
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-3xl font-bold text-orange-900">Phim đang chiếu</h3>
-            <div className="flex space-x-4">
+          <div className="mb-8">
+            <h3 className="text-3xl font-bold text-orange-900 mb-4">Phim đang chiếu</h3>
+            <div className="flex flex-col md:flex-row gap-4">
+              <Input
+                type="text"
+                placeholder="Tìm kiếm phim..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex-1 bg-orange-100 border-orange-300 text-orange-900 placeholder:text-orange-500"
+              />
               <Select value={selectedGenre} onValueChange={setSelectedGenre}>
-                <SelectTrigger className="w-48 bg-orange-200 border-orange-300 text-orange-900">
+                <SelectTrigger className="w-full md:w-48 bg-orange-200 border-orange-300 text-orange-900">
                   <SelectValue placeholder="Tất cả thể loại" />
                 </SelectTrigger>
                 <SelectContent>
@@ -190,7 +225,7 @@ export default function Home() {
               </Select>
 
               <Select value={selectedCinema} onValueChange={setSelectedCinema}>
-                <SelectTrigger className="w-48 bg-orange-200 border-orange-300 text-orange-900">
+                <SelectTrigger className="w-full md:w-48 bg-orange-200 border-orange-300 text-orange-900">
                   <SelectValue placeholder="Tất cả rạp" />
                 </SelectTrigger>
                 <SelectContent>

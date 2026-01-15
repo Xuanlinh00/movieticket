@@ -2,14 +2,8 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes/index";
 import { storage } from "./storage";
 import { setupSwagger } from "./swagger";
+import { setupVite } from "./vite";
 import dotenv from 'dotenv';
-import path from "path";
-import { fileURLToPath } from "url";
-import fs from "fs";
-
-// Get __dirname equivalent for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Load environment variables
 dotenv.config();
@@ -85,19 +79,8 @@ function log(message: string, source = "express") {
     throw err;
   });
 
-  // Serve static files in production
-  const distPath = path.resolve(__dirname, "public");
-
-  if (fs.existsSync(distPath)) {
-    app.use(express.static(distPath));
-    
-    // Fall through to index.html if the file doesn't exist
-    app.get("*", (_req, res) => {
-      res.sendFile(path.resolve(distPath, "index.html"));
-    });
-  } else {
-    log('Warning: dist/public directory not found. Static files will not be served.');
-  }
+  // Setup vite for development
+  await setupVite(app, server);
 
   const PORT = process.env.PORT || 5000;
   server.listen(PORT, () => {

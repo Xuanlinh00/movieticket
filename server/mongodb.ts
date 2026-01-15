@@ -125,12 +125,43 @@ export class MongoStorage implements IStorage {
         role: "admin",
       };
 
-      const userResults = await this.users.insertMany([adminUser, adminUser2]);
+      // Tạo thêm người dùng thường
+      const regularUsers: InsertUser[] = [
+        {
+          username: "user1",
+          email: "user1@example.com",
+          password: await bcrypt.hash("password", 10),
+          fullName: "Nguyễn Văn A",
+          phone: "0912345678",
+          role: "user",
+        },
+        {
+          username: "user2",
+          email: "user2@example.com",
+          password: await bcrypt.hash("password", 10),
+          fullName: "Trần Thị B",
+          phone: "0987654321",
+          role: "user",
+        },
+        {
+          username: "user3",
+          email: "user3@example.com",
+          password: await bcrypt.hash("password", 10),
+          fullName: "Lê Văn C",
+          phone: "0901234567",
+          role: "user",
+        },
+      ];
+
+      const userResults = await this.users.insertMany([adminUser, adminUser2, ...regularUsers]);
       const adminId = userResults.insertedIds[0];
       const admin2Id = userResults.insertedIds[1];
+      const user1Id = userResults.insertedIds[2];
+      const user2Id = userResults.insertedIds[3];
+      const user3Id = userResults.insertedIds[4];
       console.log('Admin users created');
 
-      // Create sample movies
+      // Create sample movies - Thêm nhiều phim hơn
       const movies = [
         {
           title: "Fast & Furious X",
@@ -173,7 +204,77 @@ export class MongoStorage implements IStorage {
           releaseDate: new Date("2024-05-20"),
           status: "coming-soon",
           createdAt: new Date(),
-        }
+        },
+        {
+          title: "Oppenheimer",
+          description: "Câu chuyện về J. Robert Oppenheimer, nhà vật lý lý thuyết người đã giúp phát triển bom nguyên tử.",
+          genre: ["Tiểu sử", "Lịch sử", "Chính kịch"],
+          duration: 180,
+          ageRating: "16+",
+          posterUrl: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=600",
+          trailerUrl: "https://www.youtube.com/watch?v=example3",
+          actors: ["Cillian Murphy", "Emily Blunt", "Matt Damon", "Robert Downey Jr."],
+          director: "Christopher Nolan",
+          releaseDate: new Date("2024-03-10"),
+          status: "active",
+          createdAt: new Date(),
+        },
+        {
+          title: "Barbie",
+          description: "Barbie và Ken đang có một ngày tuyệt vời ở vùng đất Barbie đầy màu sắc và dường như hoàn hảo.",
+          genre: ["Hài", "Phiêu lưu", "Giả tưởng"],
+          duration: 114,
+          ageRating: "13+",
+          posterUrl: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=600",
+          trailerUrl: "https://www.youtube.com/watch?v=example4",
+          actors: ["Margot Robbie", "Ryan Gosling", "Will Ferrell"],
+          director: "Greta Gerwig",
+          releaseDate: new Date("2024-03-25"),
+          status: "active",
+          createdAt: new Date(),
+        },
+        {
+          title: "The Batman",
+          description: "Khi kẻ giết người hàng loạt nhắm vào giới tinh hoa của Gotham, Batman phải điều tra tham nhũng sâu xa.",
+          genre: ["Hành động", "Tội phạm", "Bí ẩn"],
+          duration: 176,
+          ageRating: "16+",
+          posterUrl: "https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=600",
+          trailerUrl: "https://www.youtube.com/watch?v=example5",
+          actors: ["Robert Pattinson", "Zoë Kravitz", "Paul Dano"],
+          director: "Matt Reeves",
+          releaseDate: new Date("2024-04-05"),
+          status: "active",
+          createdAt: new Date(),
+        },
+        {
+          title: "Avatar: The Way of Water",
+          description: "Jake Sully sống cùng gia đình mới của mình trên hành tinh Pandora.",
+          genre: ["Hành động", "Phiêu lưu", "Khoa học viễn tưởng"],
+          duration: 192,
+          ageRating: "13+",
+          posterUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=600",
+          trailerUrl: "https://www.youtube.com/watch?v=example6",
+          actors: ["Sam Worthington", "Zoe Saldana", "Sigourney Weaver"],
+          director: "James Cameron",
+          releaseDate: new Date("2024-04-20"),
+          status: "active",
+          createdAt: new Date(),
+        },
+        {
+          title: "Guardians of the Galaxy Vol. 3",
+          description: "Đội Vệ binh Dải Ngân hà tiếp tục cuộc phiêu lưu của họ.",
+          genre: ["Hành động", "Hài", "Khoa học viễn tưởng"],
+          duration: 150,
+          ageRating: "13+",
+          posterUrl: "https://images.unsplash.com/photo-1608889335941-32ac5f2041b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=600",
+          trailerUrl: "https://www.youtube.com/watch?v=example7",
+          actors: ["Chris Pratt", "Zoe Saldana", "Dave Bautista"],
+          director: "James Gunn",
+          releaseDate: new Date("2024-05-15"),
+          status: "coming-soon",
+          createdAt: new Date(),
+        },
       ];
 
       const movieResults = await this.movies.insertMany(movies);
@@ -264,38 +365,312 @@ export class MongoStorage implements IStorage {
         return seats;
       };
 
-      // Create sample showtimes
+      // Create sample showtimes - Thêm nhiều suất chiếu hơn
+      const allSeats = generateSeats();
       const showtimes = [
+        // Fast & Furious X
         {
           movieId: movieIds[0],
           roomId: roomIds[0],
-          startTime: new Date("2024-12-25T20:00:00Z"),
-          endTime: new Date("2024-12-25T22:22:00Z"),
-          price: "111111",
-          availableSeats: generateSeats(),
+          startTime: new Date("2025-01-20T14:00:00Z"),
+          endTime: new Date("2025-01-20T16:22:00Z"),
+          price: "100000",
+          availableSeats: [...allSeats],
+          createdAt: new Date(),
+        },
+        {
+          movieId: movieIds[0],
+          roomId: roomIds[1],
+          startTime: new Date("2025-01-20T18:00:00Z"),
+          endTime: new Date("2025-01-20T20:22:00Z"),
+          price: "120000",
+          availableSeats: [...allSeats],
+          createdAt: new Date(),
+        },
+        {
+          movieId: movieIds[0],
+          roomId: roomIds[2],
+          startTime: new Date("2025-01-20T20:30:00Z"),
+          endTime: new Date("2025-01-20T22:52:00Z"),
+          price: "150000",
+          availableSeats: [...allSeats],
+          createdAt: new Date(),
+        },
+        // Em và Trịnh
+        {
+          movieId: movieIds[1],
+          roomId: roomIds[0],
+          startTime: new Date("2025-01-21T15:00:00Z"),
+          endTime: new Date("2025-01-21T16:45:00Z"),
+          price: "80000",
+          availableSeats: [...allSeats],
           createdAt: new Date(),
         },
         {
           movieId: movieIds[1],
-          roomId: roomIds[0],
-          startTime: new Date("2024-12-25T18:00:00Z"),
-          endTime: new Date("2024-12-25T19:45:00Z"),
-          price: "75000",
-          availableSeats: generateSeats(),
+          roomId: roomIds[3],
+          startTime: new Date("2025-01-21T19:00:00Z"),
+          endTime: new Date("2025-01-21T20:45:00Z"),
+          price: "90000",
+          availableSeats: [...allSeats],
+          createdAt: new Date(),
+        },
+        // Spider-Man
+        {
+          movieId: movieIds[2],
+          roomId: roomIds[4],
+          startTime: new Date("2025-05-25T16:00:00Z"),
+          endTime: new Date("2025-05-25T18:20:00Z"),
+          price: "130000",
+          availableSeats: [...allSeats],
+          createdAt: new Date(),
+        },
+        // Oppenheimer
+        {
+          movieId: movieIds[3],
+          roomId: roomIds[2],
+          startTime: new Date("2025-01-22T14:00:00Z"),
+          endTime: new Date("2025-01-22T17:00:00Z"),
+          price: "140000",
+          availableSeats: [...allSeats],
           createdAt: new Date(),
         },
         {
-          movieId: movieIds[1],
-          roomId: roomIds[0],
-          startTime: new Date("2024-12-25T21:00:00Z"),
-          endTime: new Date("2024-12-25T22:45:00Z"),
-          price: "75000",
-          availableSeats: generateSeats(),
+          movieId: movieIds[3],
+          roomId: roomIds[4],
+          startTime: new Date("2025-01-22T18:00:00Z"),
+          endTime: new Date("2025-01-22T21:00:00Z"),
+          price: "160000",
+          availableSeats: [...allSeats],
           createdAt: new Date(),
-        }
+        },
+        // Barbie
+        {
+          movieId: movieIds[4],
+          roomId: roomIds[1],
+          startTime: new Date("2025-01-23T15:30:00Z"),
+          endTime: new Date("2025-01-23T17:24:00Z"),
+          price: "95000",
+          availableSeats: [...allSeats],
+          createdAt: new Date(),
+        },
+        {
+          movieId: movieIds[4],
+          roomId: roomIds[3],
+          startTime: new Date("2025-01-23T20:00:00Z"),
+          endTime: new Date("2025-01-23T21:54:00Z"),
+          price: "110000",
+          availableSeats: [...allSeats],
+          createdAt: new Date(),
+        },
+        // The Batman
+        {
+          movieId: movieIds[5],
+          roomId: roomIds[4],
+          startTime: new Date("2025-01-24T14:30:00Z"),
+          endTime: new Date("2025-01-24T17:26:00Z"),
+          price: "135000",
+          availableSeats: [...allSeats],
+          createdAt: new Date(),
+        },
+        {
+          movieId: movieIds[5],
+          roomId: roomIds[2],
+          startTime: new Date("2025-01-24T19:00:00Z"),
+          endTime: new Date("2025-01-24T21:56:00Z"),
+          price: "155000",
+          availableSeats: [...allSeats],
+          createdAt: new Date(),
+        },
+        // Avatar
+        {
+          movieId: movieIds[6],
+          roomId: roomIds[4],
+          startTime: new Date("2025-01-25T13:00:00Z"),
+          endTime: new Date("2025-01-25T16:12:00Z"),
+          price: "170000",
+          availableSeats: [...allSeats],
+          createdAt: new Date(),
+        },
+        {
+          movieId: movieIds[6],
+          roomId: roomIds[4],
+          startTime: new Date("2025-01-25T17:00:00Z"),
+          endTime: new Date("2025-01-25T20:12:00Z"),
+          price: "180000",
+          availableSeats: [...allSeats],
+          createdAt: new Date(),
+        },
+        {
+          movieId: movieIds[6],
+          roomId: roomIds[4],
+          startTime: new Date("2025-01-25T21:00:00Z"),
+          endTime: new Date("2025-01-26T00:12:00Z"),
+          price: "190000",
+          availableSeats: [...allSeats],
+          createdAt: new Date(),
+        },
       ];
 
-      await this.showtimes.insertMany(showtimes);
+      const showtimeResults = await this.showtimes.insertMany(showtimes);
+      const showtimeIds = Object.values(showtimeResults.insertedIds);
+
+      // Tạo nhiều vé mẫu để test với dữ liệu đa dạng
+      const sampleTickets = [
+        {
+          userId: user1Id,
+          showtimeId: showtimeIds[0],
+          seats: ["A1", "A2"],
+          totalPrice: "200000",
+          paymentMethod: "credit_card",
+          customerInfo: JSON.stringify({
+            name: "Nguyễn Văn A",
+            email: "nguyenvana@example.com",
+            phone: "0912345678"
+          }),
+          status: "confirmed",
+          bookingCode: `TK${Date.now()}${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+          createdAt: new Date(),
+        },
+        {
+          userId: user2Id,
+          showtimeId: showtimeIds[1],
+          seats: ["B5", "B6", "B7"],
+          totalPrice: "360000",
+          paymentMethod: "momo",
+          customerInfo: JSON.stringify({
+            name: "Trần Thị B",
+            email: "tranthib@example.com",
+            phone: "0987654321"
+          }),
+          status: "confirmed",
+          bookingCode: `TK${Date.now() + 1}${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+          createdAt: new Date(),
+        },
+        {
+          userId: user3Id,
+          showtimeId: showtimeIds[3],
+          seats: ["C10"],
+          totalPrice: "80000",
+          paymentMethod: "cash",
+          customerInfo: JSON.stringify({
+            name: "Lê Văn C",
+            email: "levanc@example.com",
+            phone: "0901234567"
+          }),
+          status: "confirmed",
+          bookingCode: `TK${Date.now() + 2}${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+          createdAt: new Date(),
+        },
+        {
+          userId: adminId,
+          showtimeId: showtimeIds[6],
+          seats: ["D1", "D2", "D3", "D4"],
+          totalPrice: "560000",
+          paymentMethod: "vnpay",
+          customerInfo: JSON.stringify({
+            name: "Phạm Minh D",
+            email: "phamminhd@example.com",
+            phone: "0923456789"
+          }),
+          status: "confirmed",
+          bookingCode: `TK${Date.now() + 3}${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+          createdAt: new Date(),
+        },
+        {
+          userId: user1Id,
+          showtimeId: showtimeIds[8],
+          seats: ["E5", "E6"],
+          totalPrice: "190000",
+          paymentMethod: "credit_card",
+          customerInfo: JSON.stringify({
+            name: "Hoàng Thị E",
+            email: "hoangthie@example.com",
+            phone: "0934567890"
+          }),
+          status: "confirmed",
+          bookingCode: `TK${Date.now() + 4}${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+          createdAt: new Date(),
+        },
+        {
+          userId: user2Id,
+          showtimeId: showtimeIds[10],
+          seats: ["F8", "F9", "F10"],
+          totalPrice: "405000",
+          paymentMethod: "momo",
+          customerInfo: JSON.stringify({
+            name: "Vũ Văn F",
+            email: "vuvanf@example.com",
+            phone: "0945678901"
+          }),
+          status: "confirmed",
+          bookingCode: `TK${Date.now() + 5}${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+          createdAt: new Date(),
+        },
+        {
+          userId: user3Id,
+          showtimeId: showtimeIds[12],
+          seats: ["G1", "G2", "G3", "G4", "G5"],
+          totalPrice: "850000",
+          paymentMethod: "vnpay",
+          customerInfo: JSON.stringify({
+            name: "Đặng Thị G",
+            email: "dangthig@example.com",
+            phone: "0956789012"
+          }),
+          status: "confirmed",
+          bookingCode: `TK${Date.now() + 6}${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+          createdAt: new Date(),
+        },
+        {
+          userId: admin2Id,
+          showtimeId: showtimeIds[2],
+          seats: ["H6", "H7"],
+          totalPrice: "300000",
+          paymentMethod: "credit_card",
+          customerInfo: JSON.stringify({
+            name: "Bùi Văn H",
+            email: "buivanh@example.com",
+            phone: "0967890123"
+          }),
+          status: "confirmed",
+          bookingCode: `TK${Date.now() + 7}${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+          createdAt: new Date(),
+        },
+        {
+          userId: user1Id,
+          showtimeId: showtimeIds[7],
+          seats: ["I10", "I11", "I12"],
+          totalPrice: "480000",
+          paymentMethod: "momo",
+          customerInfo: JSON.stringify({
+            name: "Lý Thị I",
+            email: "lythii@example.com",
+            phone: "0978901234"
+          }),
+          status: "confirmed",
+          bookingCode: `TK${Date.now() + 8}${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+          createdAt: new Date(),
+        },
+        {
+          userId: user2Id,
+          showtimeId: showtimeIds[11],
+          seats: ["J5"],
+          totalPrice: "155000",
+          paymentMethod: "cash",
+          customerInfo: JSON.stringify({
+            name: "Trương Văn J",
+            email: "truongvanj@example.com",
+            phone: "0989012345"
+          }),
+          status: "confirmed",
+          bookingCode: `TK${Date.now() + 9}${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+          createdAt: new Date(),
+        },
+      ];
+
+      await this.tickets.insertMany(sampleTickets);
+      console.log('Sample tickets created');
 
       // Create sample promotions
       const promotions = [
@@ -726,8 +1101,29 @@ export class MongoStorage implements IStorage {
   }
 
   async createTicket(ticketData: InsertTicket): Promise<Ticket> {
-    const userObjectId = await this.numericIdToObjectId(ticketData.userId);
-    const showtimeObjectId = await this.numericIdToObjectId(ticketData.showtimeId);
+    // Xử lý userId: nếu đã là ObjectId thì dùng luôn, nếu là number thì chuyển đổi
+    let userObjectId;
+    if (typeof ticketData.userId === 'number') {
+      try {
+        userObjectId = await this.numericIdToObjectId(ticketData.userId);
+      } catch (error) {
+        throw new Error(`Không tìm thấy người dùng với ID: ${ticketData.userId}. Vui lòng đăng xuất và đăng nhập lại.`);
+      }
+    } else {
+      userObjectId = ticketData.userId;
+    }
+    
+    // Xử lý showtimeId tương tự
+    let showtimeObjectId;
+    if (typeof ticketData.showtimeId === 'number') {
+      try {
+        showtimeObjectId = await this.numericIdToObjectId(ticketData.showtimeId);
+      } catch (error) {
+        throw new Error(`Không tìm thấy suất chiếu với ID: ${ticketData.showtimeId}`);
+      }
+    } else {
+      showtimeObjectId = ticketData.showtimeId;
+    }
     
     const result = await this.tickets.insertOne({
       ...ticketData,

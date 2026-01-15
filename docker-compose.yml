@@ -1,5 +1,3 @@
-
-
 services:
   # MongoDB service
   mongo:
@@ -23,7 +21,6 @@ services:
       timeout: 10s
       retries: 3
 
-
   # Redis service (for caching)
   redis:
     image: redis:7-alpine
@@ -41,12 +38,11 @@ services:
       timeout: 10s
       retries: 3
 
-
-  # NaCinema application
+  # MiniCinema application
   app:
     build:
       context: .
-      target: development
+      target: runner
       dockerfile: Dockerfile
     container_name: minicinema_app
     restart: unless-stopped
@@ -56,14 +52,10 @@ services:
       redis:
         condition: service_healthy
     environment:
-      - NODE_ENV=development
-<<<<<<< HEAD
-      - MONGODB_URI=mongodb+srv://admin:xYwxTxZboPPKnqnu@cluster0.rt1k6hn.mongodb.net/cinemabook
-=======
-      - MONGODB_URI=mongodb://admin:minicinema123@mongo:27017/movie?authSource=admin
->>>>>>> bd97d2dcd87743cb25cac9522dd215e630b37313
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb+srv://admin:xYwxTxZboPPKnqnu@cluster0.rt1k6hn.mongodb.net/cinemabook?retryWrites=true&w=majority
       - REDIS_URL=redis://redis:6379
-      - JWT_SECRET=your-secret-key-change-this-in-production
+      - JWT_SECRET=your-super-secret-jwt-key-minimum-32-characters-long
       - PORT=5000
     ports:
       - "5000:5000"
@@ -71,11 +63,7 @@ services:
       - ./uploads:/app/uploads:rw
       - app_logs:/app/logs
     networks:
-<<<<<<< HEAD
       - minicinema_network
-=======
-      - nacinema_network
->>>>>>> bd97d2dcd87743cb25cac9522dd215e630b37313
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
       interval: 30s
@@ -88,7 +76,6 @@ services:
           memory: 1G
         reservations:
           memory: 512M
-
 
   # Nginx reverse proxy
   nginx:
@@ -106,7 +93,6 @@ services:
     networks:
       - minicinema_network
 
-
 volumes:
   mongo_data:
     driver: local
@@ -115,13 +101,6 @@ volumes:
   app_logs:
     driver: local
 
-
 networks:
-<<<<<<< HEAD
   minicinema_network:
     driver: bridge
-=======
-  nacinema_network:
-    driver: bridgea
->>>>>>> bd97d2dcd87743cb25cac9522dd215e630b37313
-

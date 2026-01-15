@@ -662,7 +662,7 @@ export default function AdminPanel() {
                             Thêm phim mới
                           </Button>
                         </DialogTrigger>
-                      <DialogContent className="bg-orange-50 border-orange-200">
+                      <DialogContent className="bg-orange-50 border-orange-200 max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle className="text-orange-900">
                             {editingMovie ? "Chỉnh sửa phim" : "Thêm phim mới"}
@@ -992,7 +992,7 @@ export default function AdminPanel() {
                             Thêm rạp mới
                           </Button>
                         </DialogTrigger>
-                      <DialogContent className="bg-orange-50 border-orange-200">
+                      <DialogContent className="bg-orange-50 border-orange-200 max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle className="text-orange-900">
                             {editingCinema ? "Chỉnh sửa rạp chiếu" : "Thêm rạp chiếu mới"}
@@ -1479,7 +1479,7 @@ export default function AdminPanel() {
 
         {/* Edit User Dialog */}
         <Dialog open={isUserDialogOpen} onOpenChange={setIsUserDialogOpen}>
-          <DialogContent className="bg-orange-50 border-orange-200">
+          <DialogContent className="bg-orange-50 border-orange-200 max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-orange-900">Chỉnh sửa người dùng</DialogTitle>
             </DialogHeader>
@@ -1533,7 +1533,7 @@ export default function AdminPanel() {
 
         {/* Add Showtime Dialog */}
         <Dialog open={isShowtimeDialogOpen} onOpenChange={setIsShowtimeDialogOpen}>
-          <DialogContent className="bg-orange-50 border-orange-200">
+          <DialogContent className="bg-orange-50 border-orange-200 max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-orange-900">
                 {isEditingShowtime ? 'Chỉnh sửa suất chiếu' : 'Thêm suất chiếu mới'}

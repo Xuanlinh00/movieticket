@@ -60,14 +60,12 @@ export default function MovieReviews({ movieId }: MovieReviewsProps) {
 
   const reviewMutation = useMutation({
     mutationFn: async (data: ReviewFormData) => {
-      return await apiRequest(`/api/movies/${movieId}/reviews`, {
-        method: "POST",
-        body: JSON.stringify({
-          ...data,
-          movieId,
-          userId: currentUser?.id,
-        }),
+      const response = await apiRequest("POST", `/api/movies/${movieId}/reviews`, {
+        ...data,
+        movieId,
+        userId: currentUser?.id,
       });
+      return response.json();
     },
     onSuccess: () => {
       toast({
@@ -79,10 +77,10 @@ export default function MovieReviews({ movieId }: MovieReviewsProps) {
       form.reset();
       setSelectedRating(0);
     },
-    onError: () => {
+    onError: (error: any) => {
       toast({
         title: "Lỗi đánh giá",
-        description: "Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại.",
+        description: error.message || "Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại.",
         variant: "destructive",
       });
     },
@@ -113,6 +111,14 @@ export default function MovieReviews({ movieId }: MovieReviewsProps) {
   };
 
   const onSubmit = (data: ReviewFormData) => {
+    if (selectedRating === 0) {
+      toast({
+        title: "Chưa chọn đánh giá",
+        description: "Vui lòng chọn số sao đánh giá.",
+        variant: "destructive",
+      });
+      return;
+    }
     reviewMutation.mutate({ ...data, rating: selectedRating });
   };
 

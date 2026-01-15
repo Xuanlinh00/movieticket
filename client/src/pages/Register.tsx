@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { setAuthToken, setAuthUser } from "@/lib/auth";
 import { Film, Eye, EyeOff } from "lucide-react";
 
 const registerSchema = z.object({
@@ -55,13 +54,12 @@ export default function Register() {
       return response.json();
     },
     onSuccess: (data) => {
-      setAuthToken(data.token);
-      setAuthUser(data.user);
+      // Không tự động đăng nhập, chuyển về trang login
       toast({
         title: "Đăng ký thành công",
-        description: `Chào mừng ${data.user.fullName}!`,
+        description: `Tài khoản ${data.user.username} đã được tạo. Vui lòng đăng nhập.`,
       });
-      setLocation("/");
+      setLocation("/login");
     },
     onError: (error: any) => {
       toast({
